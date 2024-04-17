@@ -45,7 +45,7 @@ Route::post('/setting', [SettingController::class, 'store']);
 Route::get('apartments', [ApartmentController::class, 'index']);
 Route::post('apartments', [ApartmentController::class, 'store']);
 Route::get('apartments/{id}', [ApartmentController::class, 'show']);
-Route::put('apartments/{id}', [ApartmentController::class, 'update']);
+Route::post('apartments/{id}', [ApartmentController::class, 'update']);
 Route::delete('apartments/{id}', [ApartmentController::class, 'destroy']);
 
 });

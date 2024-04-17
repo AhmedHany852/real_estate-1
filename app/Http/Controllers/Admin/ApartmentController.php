@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Validator;
 
 class ApartmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $apartments = Apartment::all();
-        return response()->json($apartments);
+        $apartments = Apartment::paginate($request->get('per_page', 50));
+        return response()->json($apartments, 200);
     }
 
     public function store(Request $request)
@@ -24,14 +24,26 @@ class ApartmentController extends Controller
             'apartment_address' => 'required',
             'owner_phone' => 'required',
         ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors(),
+            ], 400);
+        }
+        if ($request->file('photo')) {
+            $avatar = $request->file('photo');
+            $avatar->store('uploads/apartment_photo/', 'public');
+            $photo = $avatar->hashName();
+        } else {
+            $photo = null;
+        }
 
         $apartment = Apartment::create([
             'apartment_name' =>$request->apartment_name ,
             'apartment_number' =>$request-> apartment_number,
-            'owner_id' => $request->owner,
+            'owner_id' => $request->owner_id,
             'apartment_address' =>$request->apartment_address ,
             'owner_phone' =>$request->owner_phone ,
-            'photo' =>$request->photo,
+            'photo' =>$photo,
         ]);
 
         return response()->json($apartment, 200);
@@ -40,7 +52,7 @@ class ApartmentController extends Controller
     public function show($id)
     {
         $apartment = Apartment::findOrFail($id);
-        return response()->json($apartment);
+        return response()->json($apartment , 200);
     }
 
     public function update(Request $request, $id)
@@ -61,7 +73,7 @@ class ApartmentController extends Controller
         }
         if ($request->file('photo')) {
             $avatar = $request->file('photo');
-            $avatar->store('uploads/service_photo/', 'public');
+            $avatar->store('uploads/apartment_photo/', 'public');
             $photo = $avatar->hashName();
         } else {
             $photo = null;
@@ -69,7 +81,7 @@ class ApartmentController extends Controller
 
         $apartment->update([
             'apartment_name' =>$request->apartment_name ,
-            'apartment_number' =>$request-> apartment_number,
+            'apartment_number' =>$request->apartment_number,
             'owner_id' => $request->owner_id,
             'apartment_address' =>$request->apartment_address ,
             'owner_phone' =>$request->owner_phone,
@@ -84,6 +96,6 @@ class ApartmentController extends Controller
         $apartment = Apartment::findOrFail($id);
         $apartment->delete();
 
-        return response()->json(null, 204);
+        return response()->json(['message' => 'العملية تمت بنجاح'], 204);
     }
 }
