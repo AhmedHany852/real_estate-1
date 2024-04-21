@@ -6,8 +6,8 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ApartmentController;
-
-
+use App\Http\Controllers\Admin\ExpenseController;
+use App\Http\Controllers\Admin\RentController;
 
 Route::group([
     'middleware' => 'api',
@@ -47,6 +47,20 @@ Route::post('apartments', [ApartmentController::class, 'store']);
 Route::get('apartments/{id}', [ApartmentController::class, 'show']);
 Route::post('apartments/{id}', [ApartmentController::class, 'update']);
 Route::delete('apartments/{id}', [ApartmentController::class, 'destroy']);
+
+//expenses
+Route::get('expenses', [ExpenseController::class, 'index']);
+Route::post('expenses', [ExpenseController::class, 'store']);
+Route::get('expenses/{id}', [ExpenseController::class, 'show']);
+Route::post('expenses/{id}', [ExpenseController::class, 'update']);
+Route::delete('expenses/{id}', [ExpenseController::class, 'destroy']);
+
+//rents
+Route::get('rents', [RentContro1ller::class, 'index']);
+Route::post('rents', [RentController::class, 'store']);
+Route::get('rents/{id}', [RentController::class, 'show']);
+Route::post('rents/{id}', [RentController::class, 'update']);
+Route::delete('rents/{id}', [RentController::class, 'destroy']);
 
 });
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Apartment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ApartmentController extends Controller
@@ -93,9 +94,24 @@ class ApartmentController extends Controller
 
     public function destroy($id)
     {
-        $apartment = Apartment::findOrFail($id);
-        $apartment->delete();
-
-        return response()->json(['message' => 'العملية تمت بنجاح'], 204);
+        try {
+            $apartment = Apartment::findOrFail($id);
+    
+            // Delete personal photo if it exists
+            if ($apartment->apartment_photo) {
+                // Assuming 'personal_photo' is the attribute storing the file name
+                $photoPath = 'uploads/apartment_photo/' . $apartment->apartment_photo;
+    
+                // Delete photo from storage
+                Storage::delete($photoPath);
+            }
+    
+            $apartment->delete();
+    
+            return response()->json(['message' => 'تمت عملية الحذف بنجاح'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'حدث خطأ أثناء محاولة حذف الشقة'], 400);
+        }
     }
+    
 }
